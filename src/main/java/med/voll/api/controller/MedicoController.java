@@ -1,10 +1,7 @@
 package med.voll.api.controller;
 
 import jakarta.validation.Valid;
-import med.voll.api.medico.DadosCadastroMedico;
-import med.voll.api.medico.DadosListagemMedico;
-import med.voll.api.medico.Medico;
-import med.voll.api.medico.MedicoRepository;
+import med.voll.api.medico.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -51,7 +48,29 @@ public class MedicoController {
             O 'Pageable' realiza a paginação automaticamente.
          */
 
-        return repository.findAll(paginacao).map(DadosListagemMedico::new);
+        /*
+        Há um padrão de nomenclatura do Spring Data, que se criarmos um método com um padrão correto, ele consegue
+        montar a query automaticamente.
+        Find all + By + Atributo
+         */
+        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+    }
+
+    @PutMapping
+    @Transactional
+    public void atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados) {
+        var medico = repository.getReferenceById(dados.id());
+        medico.atualizarInformacoes(dados);
+    }
+
+    //O Parâmetro do DeleteMapping entre chaves mostra que ele é dinâmico e adicionado ao fim da url '/medicos'.
+    // PathVariable informa que o id do parâmetro é o mesmo informado na URL.
+    @DeleteMapping("/{id}")
+    @Transactional
+    public void excluir(@PathVariable Long id) {
+        // repository.deleteById(id); -> Essa exclusão é PERMANENTE, apagando o registro do banco de dados.
+        var medico = repository.getReferenceById(id);
+        medico.excluir();
     }
 
 }
