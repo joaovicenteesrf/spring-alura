@@ -1,0 +1,19 @@
+Para a ordenação, o comportamento é o mesmo da paginação, deve ser passado na URL do postman.
+
+Exemplo:
+
+No projeto, a listagem de médicos vem na url:
+
+http://localhost:8080/medicos
+
+Se quisermos alterar a ordenação, basta inserir o parâmetro 'sort' ao final da url com o atributo da entidade JPA.
+
+http://localhost:8080/medicos?sort=nome
+
+A ordenação é CRESCENTE por padrão, mas caso seja necessário inverter a ordem, basta adicionar o desc ao final da url
+
+http://localhost:8080/medicos?sort=nome,desc
+
+Para concatenar parâmetros, usa-se o &:
+
+http://localhost:8080/medicos?sort=nome,desc&size=2

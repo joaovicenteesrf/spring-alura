@@ -1,0 +1,8 @@
+Em determinado momento foi necessário adicionar o campo "Telefone" à tabela medicos, por meio de uma migration.
+A migration (V2) cria a tabela no banco de dados, mas alterações tiveram que ser feitas no código, para receber e validar
+esse novo campo.
+As alterações foram feitas em:
+- Medico.java
+- DadosCadastroMedico.java
+
+Percebe-se, portanto, que foram feitas alterações tanto na classe DTO quanto na JPA.

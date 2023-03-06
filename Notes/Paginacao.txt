@@ -1,0 +1,15 @@
+Como é demonstrado na controller, a paginação é feita automaticamente pelo Spring. Entretanto, pode ser necessário
+listar a quantidade de registros por página. Essa manipulação é feita no próprio Postman, na url que é passada para a
+requisição GET.
+
+Exemplo:
+
+No projeto, a listagem de médicos vem na url:
+
+http://localhost:8080/medicos
+
+Se quisermos alterar o número de elementos por página, basta inserir um parâmetro ao final da url.
+
+http://localhost:8080/medicos?size=1
+
+Com a url acima, apenas 1 registro será mostrado por página.
