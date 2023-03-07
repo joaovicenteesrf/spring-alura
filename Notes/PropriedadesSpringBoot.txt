@@ -1,0 +1,5 @@
+O Spring Boot possui centenas de propriedades que podemos incluir nesse arquivo, sendo impossível memorizar todas elas.
+Sendo assim, é importante conhecer a documentação que lista todas essas propriedades, pois eventualmente precisaremos
+consultá-la.
+
+https://docs.spring.io/spring-boot/docs/current/reference/html/application-properties.html
