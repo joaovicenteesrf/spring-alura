@@ -5,8 +5,10 @@ import med.voll.api.medico.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.List;
 
@@ -29,19 +31,33 @@ public class MedicoController {
     @PostMapping
     // Anotação 'Transactional' é necessária, pois o método realiza alterações no banco de dados
     @Transactional
-    public void cadastrar(@RequestBody @Valid DadosCadastroMedico dados) {
+    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroMedico dados, UriComponentsBuilder uriBuilder) {
         /*
         A anotação 'RequestBody' mapeia que o parâmetro json vem do corpo da requisição, enviada pelo postman.
          */
 
+        var medico = new Medico(dados);
+
         /*
         O método save é herdado pelo repository e ele é o responsável por salvar os dados no banco de dados.
          */
-        repository.save(new Medico(dados));
+        repository.save(medico);
+
+        /*
+        uriBuilder encapsula a URL, pois após o deploy não será mais localhost. A url passará o id do médico
+        dinamicamente e o método buildAndExpand serve para resgatar esse id no banco de dados.
+         */
+        var uri = uriBuilder.path("/medicos/{id}").buildAndExpand(medico.getId()).toUri();
+
+        var dto = new DadosDetalhamentoMedico(medico);
+
+        // Devolverá o código 201 (Created). Devolve no corpo da resposta os dados do novo recurso/registro criado
+        // Devolve também um cabeçalho do protocolo HTTP (Location)
+        return ResponseEntity.created(uri).body(dto);
     }
 
     @GetMapping
-    public Page<DadosListagemMedico> listar(Pageable paginacao) {
+    public  ResponseEntity<Page<DadosListagemMedico>> listar(Pageable paginacao) {
         /* O método findAll retorna um objeto do tipo Medico, mas é necessário que retorne um objeto do tipo
         DadosListagemMedico, por isso há a conversão entre o tipo de retorno.
 
@@ -53,24 +69,36 @@ public class MedicoController {
         montar a query automaticamente.
         Find all + By + Atributo
          */
-        return repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemMedico::new);
+        return ResponseEntity.ok(page);
     }
 
     @PutMapping
     @Transactional
-    public void atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados) {
+    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoMedico dados) {
         var medico = repository.getReferenceById(dados.id());
         medico.atualizarInformacoes(dados);
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
     //O Parâmetro do DeleteMapping entre chaves mostra que ele é dinâmico e adicionado ao fim da url '/medicos'.
     // PathVariable informa que o id do parâmetro é o mesmo informado na URL.
     @DeleteMapping("/{id}")
     @Transactional
-    public void excluir(@PathVariable Long id) {
+    public ResponseEntity excluir(@PathVariable Long id) {
         // repository.deleteById(id); -> Essa exclusão é PERMANENTE, apagando o registro do banco de dados.
         var medico = repository.getReferenceById(id);
         medico.excluir();
+
+        // ResponseEntity é uma classe do Spring que controla a resposta devolvida pela Framework.
+        return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity detalhar(@PathVariable Long id) {
+        var medico = repository.getReferenceById(id);
+
+        return ResponseEntity.ok(new DadosDetalhamentoMedico(medico));
     }
 
 }
