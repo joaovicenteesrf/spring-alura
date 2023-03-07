@@ -12,4 +12,4 @@ Se quisermos alterar o número de elementos por página, basta inserir um parâm
 
 http://localhost:8080/medicos?size=1
 
-Com a url acima, apenas 1 registro será mostrado por página.
+Com a url acima apenas 1 registro será mostrado por página.
