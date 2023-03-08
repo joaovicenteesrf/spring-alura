@@ -1,0 +1,5 @@
+JSON Web Token, ou JWT, é um padrão utilizado para a geração de tokens, que nada mais são do que Strings, representando,
+ de maneira segura, informações que serão compartilhadas entre dois sistemas. Você pode conhecer melhor sobre esse
+ padrão em seu site oficial.
+
+https://jwt.io/introduction
